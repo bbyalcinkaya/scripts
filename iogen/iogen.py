@@ -1,4 +1,5 @@
 import os
+import time
 
 # Args
 generator_args = [
@@ -29,6 +30,7 @@ nfiles = 1
 for (times, arg) in generator_args:
     for i in range(times):
         os.system("{} {} > {}/{}.txt".format(generator, arg, input_dir, nfiles))
+        time.sleep(1) # wait 1 sec before generating another input file
         print("generated {} {}".format(nfiles, arg))
         nfiles += 1
 nfiles -= 1
