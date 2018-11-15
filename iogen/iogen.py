@@ -1,47 +1,39 @@
 import os
 import time
-
+import itertools
 # Args
-generator_args = [
-  (3,"foo"),
-  (2,"bar"),
-  (1,"baz")
-]
-"""
-generator_args = [
-  (n, arg),
-  ...
-]
-Runs generator with argument arg n times and so on
-"""
+generator_args = sum((
+  ("foo",)*3,
+  ("bar",)*2,
+  ("baz",)*1
+), tuple())
 
-# Paths
+# Executables
 generator = "echo"         
-solver = "echo yah"        
+solver = "echo yah"
+
+# File paths
 input_dir = "Example/input"         
 output_dir = "Example/output"     
+input_format = lambda i: f"{input_dir}/input{i}.txt"
+output_format = lambda i: f"{output_dir}/output{i}.txt"
 
-# Create Inputs
+# File names
+input_files = [input_format(i) for i in range(len(generator_args))]
+output_files = [output_format(i) for i in range(len(generator_args))]
+
+# Create directories
 if not os.path.isdir(input_dir):
-    os.mkdir(input_dir)
-
-
-nfiles = 1
-for (times, arg) in generator_args:
-    for i in range(times):
-        os.system("{} {} > {}/{}.txt".format(generator, arg, input_dir, nfiles))
-        time.sleep(1) # wait 1 sec before generating another input file
-        print("generated {} {}".format(nfiles, arg))
-        nfiles += 1
-nfiles -= 1
-
-
-
-# Create outputs
+    os.makedirs(input_dir, exist_ok=True)
 if not os.path.isdir(output_dir):
-    os.mkdir(output_dir)
-for i in range(1,nfiles+1):
-    os.system("{} < {}/{}.txt > {}/{}.txt".format(solver, input_dir, i, output_dir, i))
-    print("solved {}".format(i))
+    os.makedirs(output_dir, exist_ok=True)
+
+
+for (inp, out, arg) in zip(input_files, output_files, generator_args):
+  os.system(f"{generator} {arg} > {inp}")
+  print("Created Input:", inp)
+  os.system(f"{solver} < {inp} > {out}")
+  print("Created Output:", out)
+
 
  
